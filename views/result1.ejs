@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Dropout Analysis - Result</title>
+  <style>
+:root {
+  --clr-base:     #34495e;
+  --clr-contrast: #ecf0f1;
+  --clr-accent:   #ffcc00;
+  --card-bg:      rgba(255,255,255,0.1);
+  --shadow-dark:  rgba(0,0,0,0.5);
+  --shadow-light: rgba(255,255,255,0.05);
+}
+
+/* Full‑page background */
+body {
+  margin: 0;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  color: var(--clr-contrast);
+  background:
+    linear-gradient(180deg, rgba(52,73,94,0.8), rgba(52,73,94,0.8)),
+    url('https://source.unsplash.com/1600x900/?education,library')
+      center/cover no-repeat;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Shared card styles */
+.result-container,
+.additional-section {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  border-radius: 15px;
+  padding: 30px 40px;
+  margin: 20px auto;               /* center horizontally */
+  box-shadow:
+    8px 8px 20px var(--shadow-dark),
+   -8px -8px 20px var(--shadow-light);
+  transition: transform .3s, box-shadow .3s;
+  text-align: center;
+}
+.result-container:hover,
+.additional-section:hover {
+  transform: translateY(-5px);
+  box-shadow:
+    12px 12px 30px var(--shadow-dark),
+   -12px -12px 30px var(--shadow-light);
+}
+
+/* Decorative graduation cap */
+.result-container::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 120px;
+  height: 120px;
+  background:
+    url('https://img.icons8.com/ios-filled/100/ffcc00/graduation-cap.png')
+    center/contain no-repeat;
+  opacity: 0.3;
+  transform: rotate(15deg);
+}
+
+/* Main title */
+.result-container h1 {
+  margin: 0 0 10px;
+  font-size: 2.5rem;
+  line-height: 1.2;
+}
+
+/* Result text: larger, bolder */
+#result-text {
+  margin: 0 auto 10px;
+  max-width: 90%;
+  font-size: 1.5rem;               /* bumped up size */
+  font-weight: bold;
+  line-height: 1.4;
+}
+
+/* Classification colors */
+.dropout-risk  { color: #e74c3c; }
+.no-dropout-risk { color: #2ecc71; }
+
+/* Section headers with book icon */
+.section-header {
+  position: relative;
+  margin: 0 auto 12px;
+  padding-left: 40px;
+  font-size: 1.8rem;
+  line-height: 1.3;
+  text-align: left;
+  max-width: 90%;
+}
+.section-header::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 32px; height: 32px;
+  background:
+    url('https://img.icons8.com/ios-glyphs/60/ffcc00/book--v1.png')
+    center/contain no-repeat;
+  transform: translateY(-50%);
+  opacity: 0.6;
+}
+
+/* Link boxes container */
+.link-boxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin: 10px 0;
+}
+
+/* Individual link box */
+.link-box {
+  display: inline-block;
+  background: var(--clr-accent);
+  color: var(--clr-base);
+  padding: 12px 24px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: transform .2s, box-shadow .2s;
+}
+.link-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+}
+
+/* Next Steps list styling */
+.additional-section ul {
+  list-style: disc inside;
+  text-align: left;
+  padding-left: 20px;
+  margin: 10px auto 0;
+  max-width: 90%;
+}
+
+/* Footer watermark */
+body::after {
+  content: "";
+  position: absolute;
+  bottom: 10px;
+  width: 80px; height: 80px;
+  background:
+    url('https://img.icons8.com/fluency-systems-regular/96/ffcc00/school.png')
+    center/contain no-repeat;
+  opacity: 0.2;
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  .result-container,
+  .additional-section {
+    padding: 20px;
+  }
+  .section-header {
+    font-size: 1.4rem;
+    padding-left: 36px;
+  }
+}
+  </style>
+</head>
+<!-- jsPDF for PDF creation -->
+
+
+<body>
+  <div class="result-container">
+    <h1>Student Dropout Prediction</h1>
+    <p id="result-text"></p>
+  </div>
+  <div id="additional-info"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+  <script>
+    
+    function calculateDropout(answers) {
+      let score = 0;
+
+      if (answers.q1 === 'Not interested in business') score += 0;
+      if (answers.q1 === 'Start Business maybe after college') score += 1;
+      if (answers.q1 === 'Somewhat interested in starting business while in school') score += 2;
+      if (answers.q1 === 'Very likely to start business in school') score += 3;
+
+      if (answers.q2 === 'More than 85 percent marks') score += 0;
+      if (answers.q2 === 'Between 75-85 percent marks') score += 1;
+      if (answers.q2 === 'Between 60-75 percent marks') score += 2;
+      if (answers.q2 === 'Less than 60 percent marks') score += 3;
+
+      if (answers.q3 === 'No formal education done by mother') score += 2;
+      if (answers.q3 === 'Mother studied till High School') score += 1;
+      if (answers.q3 === 'Undergraduate done by mother') score += 0;
+      if (answers.q3 === 'Postgraduate done by mother') score += 0;
+
+      if (answers.q4 === 'No formal education done by father') score += 2;
+      if (answers.q4 === 'Father studied till High School') score += 1;
+      if (answers.q4 === 'Undergraduate done by father') score += 0;
+      if (answers.q4 === 'Postgraduate done by father') score += 0;
+
+      if (answers.q5 === 'Yes student displaced from home') score += 2;
+      if (answers.q5 === 'Student is not displaced from home') score += 0;
+      if (answers.q5 === 'Student is Occasionally displaced from home') score += 1;
+      
+      if (answers.q6 === 'Yes student have special educational needs') score += 2;
+      if (answers.q6 === 'student does have special educational needs') score += 0;
+      if (answers.q6 === 'Students special educational needs, Need to be assessed') score += 1;
+      
+      if (answers.q7 === 'The student regularly has fallen behind on any tuition payments') score += 3;
+      if (answers.q7 === 'The student regularly has fallen behind on any tuition payments') score += 0;
+      if (answers.q7 === 'The student rarely has fallen behind on any tuition payments') score += 1;
+      if (answers.q7 === 'The student requently has fallen behind on any tuition payments') score += 2;
+
+      if (answers.q8 === 'Student has successfully pass all your subject/courses') score += 0;
+      if (answers.q8 === 'Student has failed in one or two subject/courses') score += 1;
+      if (answers.q8 === 'Student has failed in more than two subject/courses') score += 2;
+      
+      if (answers.q9 === 'Family income level is low') score += 2;
+      if (answers.q9 === 'Family income level is medium') score += 1;
+      if (answers.q9 === 'Family income level is high') score += 0;
+      if (answers.q9 === 'Family income level is prefer not to say') score += 1;
+
+      if (answers.q10 === 'Gender is male') score += 0;
+      if (answers.q10 === 'Gender is female') score += 1;
+      
+      if (answers.q11 === 'Not interested in subjects that have been alloted') score += 2;
+      if (answers.q11 === 'Somewhat interested in subjects that have been alloted') score += 1;
+      if (answers.q11 === 'interested in subjects that have been alloted') score += 0;
+      
+      if (answers.q13 === 'Very satisfied with the teaching quality in institution') score += 0;
+      if (answers.q13 === 'Satisfied, with the teaching quality in institution but it could be better') score += 1;
+      if (answers.q13 === 'Dissatisfied, teaching methods are unhelpful') score += 2;
+      if (answers.q13 === 'Very dissatisfied with the teaching quality in institution') score += 3;
+
+      if (answers.q12 === 'No, I am free to make my own choices regarding your education') score += 0;
+      if (answers.q12 === 'Sometimes, I feel mild pressure from family or scoiety regarding education') score += 1;
+      if (answers.q12 === 'Often, the pressure is noticeable from family or society regarding education') score += 2;
+      if (answers.q12 === 'Always, I feel forced from family or society regarding education path') score += 3;
+
+      if (answers.q14 === 'Yes, I feel very connected to institution and its community') score += 0;
+      if (answers.q14 === 'Somewhat connected to institution and its community') score += 1;
+      if (answers.q14 === 'Not very connected to institution and its community') score += 2;
+      if (answers.q14 === 'Not connected at all to institution and its community') score += 3;
+
+      if (answers.q15 === 'Excellent, no issues in physical health') score += 0;
+      if (answers.q15 === 'Good, but with minor concerns in physical health') score += 1;
+      if (answers.q15 === 'Poor, often sick or fatigued in physical health') score += 2;
+      if (answers.q15 === 'Very poor physical health, affecting my ability to study') score += 3;
+
+      if (answers.q16 === 'Excellent, no issues in mental health') score += 0;
+      if (answers.q16 === 'Okay, but I experience some stress in mental health') score += 1;
+      if (answers.q16 === 'Poor, I feel stressed or anxious often in mental health') score += 2;
+      if (answers.q16 === 'Very poor, I feel overwhelmed and helpless in mental health') score += 3;
+
+      if (answers.q17 === 'No, never face discrimination based on caste, religion, or economic status at institution') score += 0;
+      if (answers.q17 === 'Rarely face discrimination based on caste, religion, or economic status at institution') score += 1;
+      if (answers.q17 === 'Often face discrimination based on caste, religion, or economic status at institution and it bothers me') score += 2;
+      if (answers.q17 === 'Frequently face discrimination based on caste, religion, or economic status at institution and it greatly affects me') score += 3;
+
+      if (answers.q18 === 'Yes, all facilities are available to me') score += 0;
+      if (answers.q18 === 'Most facilities are available, but some are lacking') score += 1;
+      if (answers.q18 === 'Few facilities are available, and they are inadequate') score += 2;
+      if (answers.q18 === 'No, I lack access to almost all essential resources') score += 3;
+
+      if (answers.q19 === 'Yes, transportation to and from institution is very convenient') score += 0;
+      if (answers.q19 === 'Mostly transportation to and from institution is convenient, with occasional challenges') score += 1;
+      if (answers.q19 === 'Often inconvenient, transportation to and from institution takes too much time or effort') score += 2;
+      if (answers.q19 === 'Very inconvenient, transportation to and from institution is a major problem') score += 3;
+
+      if (answers.q20 === 'Student is schoolarship holder') score += 0;
+      if (answers.q20 === 'Student is not schoolarship holder') score += 1;
+      return score >= 20 ? 'dropout' : 'no-dropout';
+    }
+
+    function getAnswersFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        q1: params.get('q1'),
+        q2: params.get('q2'),
+        q3: params.get('q3'),
+        q4: params.get('q4'),
+        q5: params.get('q5'),
+        q6: params.get('q6'),
+        q7: params.get('q7'),
+        q8: params.get('q8'),
+        q9: params.get('q9'),
+        q10: params.get('q10'),
+        q11: params.get('q11'),
+        q12: params.get('q12'),
+        q13: params.get('q13'),
+        q14: params.get('q14'),
+        q15: params.get('q15'),
+        q16: params.get('q16'),
+        q17: params.get('q17'),
+        q18: params.get('q18'),
+        q19: params.get('q19'),
+        q20: params.get('q20')
+      };
+    }
+
+   
+    const answers = getAnswersFromURL();
+    const result = calculateDropout(answers);
+    const resultText = document.getElementById('result-text');
+    const additionalInfo = document.getElementById('additional-info');
+
+    if (result === 'dropout') {
+      resultText.innerText = 'Student is at risk of dropping out.';
+      resultText.classList.add('dropout-risk');
+
+   
+      const govSection = document.createElement('div');
+      govSection.classList.add('additional-section');
+      const govHeader = document.createElement('h2');
+      govHeader.classList.add('section-header');
+      govHeader.innerText = 'Government Schemes';
+      govSection.appendChild(govHeader);
+
+      const govLinkBoxContainer = document.createElement('div');
+      govLinkBoxContainer.classList.add('link-boxes');
+      const schemes = [
+        { name: 'Skill India', url: 'https://www.skillindiadigital.gov.in/home' },
+        { name: 'PM Kaushal Vikas Yojana', url: 'https://www.skillindiadigital.gov.in/pmkvy-dashboard' },
+        { name: 'National Career Service', url: 'https://www.ncs.gov.in' }
+      ];
+      schemes.forEach(scheme => {
+        const link = document.createElement('a');
+        link.href = scheme.url;
+        link.target = '_blank';
+        link.classList.add('link-box');
+        link.innerText = scheme.name;
+        govLinkBoxContainer.appendChild(link);
+      });
+      govSection.appendChild(govLinkBoxContainer);
+      additionalInfo.appendChild(govSection);
+
+     
+      const dropoutCourseSection = document.createElement('div');
+      dropoutCourseSection.classList.add('additional-section');
+      const dropoutCourseHeader = document.createElement('h2');
+      dropoutCourseHeader.classList.add('section-header');
+      dropoutCourseHeader.innerText = 'Dropout Related Courses';
+      dropoutCourseSection.appendChild(dropoutCourseHeader);
+
+      const dropoutCourseContainer = document.createElement('div');
+      dropoutCourseContainer.classList.add('link-boxes');
+      const dropoutCourses = [
+        { name: 'Career Counseling', url: 'https://setmycareer.com/' },
+        { name: 'Skill Development', url: 'https://www.udemy.com/' },
+        { name: 'NGO', url: 'https://www.raiseindiafoundation.org/work-education-1.php' }
+      ];
+      dropoutCourses.forEach(course => {
+        const link = document.createElement('a');
+        link.href = course.url;
+        link.target = '_blank';
+        link.classList.add('link-box');
+        link.innerText = course.name;
+        dropoutCourseContainer.appendChild(link);
+      });
+      dropoutCourseSection.appendChild(dropoutCourseContainer);
+      additionalInfo.appendChild(dropoutCourseSection);
+
+     
+      const nextStepsSection = document.createElement('div');
+      nextStepsSection.classList.add('additional-section');
+      const nextStepsHeader = document.createElement('h2');
+      nextStepsHeader.classList.add('section-header');
+      nextStepsHeader.innerText = 'Next Steps';
+      nextStepsSection.appendChild(nextStepsHeader);
+
+      const stepsList = document.createElement('ul');
+      const steps = [
+        'Consult a career counselor for personalized advice.',
+        'Enroll in skill development programs to enhance your capabilities.',
+        'Attend remedial classes to address academic challenges.',
+        'Discuss your options with mentors and academic advisors.'
+      ];
+      steps.forEach(step => {
+        const li = document.createElement('li');
+        li.innerText = step;
+        stepsList.appendChild(li);
+      });
+      nextStepsSection.appendChild(stepsList);
+      additionalInfo.appendChild(nextStepsSection);
+
+    } else {
+      resultText.innerText = 'Student is not likely to drop out.';
+      resultText.classList.add('no-dropout-risk');
+
+      // School Related Courses Section
+      const schoolSection = document.createElement('div');
+      schoolSection.classList.add('additional-section');
+      const schoolHeader = document.createElement('h2');
+      schoolHeader.classList.add('section-header');
+      schoolHeader.innerText = 'School Related Courses';
+      schoolSection.appendChild(schoolHeader);
+
+      const schoolLinkBoxContainer = document.createElement('div');
+      schoolLinkBoxContainer.classList.add('link-boxes');
+      const schoolCourses = [
+        { name: 'High School Coursera Courses', url: 'https://www.coursera.org/collections/courses-for-high-school-students' },
+        { name: 'Workshops', url: 'https://mindframes.co.in/schools/school-workshops/' },
+        { name: 'Literature Clubs', url: 'https://example.com/literature-clubs' }
+      ];
+      schoolCourses.forEach(course => {
+        const link = document.createElement('a');
+        link.href = course.url;
+        link.target = '_blank';
+        link.classList.add('link-box');
+        link.innerText = course.name;
+        schoolLinkBoxContainer.appendChild(link);
+      });
+      schoolSection.appendChild(schoolLinkBoxContainer);
+      additionalInfo.appendChild(schoolSection);
+    }
+  </script>
+
+
+
+<script>
+  (async () => {
+    console.log("Attempting to fetch AI report...");
+    // 1. Re-collect answers from URL params (already done above, reuse the 'answers' variable)
+    console.log("Answers collected for report:", answers);
+
+    // Check if answers object is populated
+    if (!answers || Object.keys(answers).length < 20) { // Check for expected number
+        console.error("Not all answers were found in the URL.", answers);
+        // Display an error message instead of trying to generate a report
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'additional-section';
+        errorDiv.innerHTML = `<h2 class="section-header">Report Error</h2><p style="color: #e74c3c;">Could not generate report because some answers were missing. Please retake the questionnaire.</p>`;
+        document.getElementById('additional-info').prepend(errorDiv); // Prepend error
+        return; // Stop execution
+    }
+
+
+    // 2. Fetch the AI-generated report
+    let reportText = '⚠️ Report generation is currently unavailable. Please try again later.'; // Default error/placeholder
+    let fetchSuccessful = false;
+
+    try {
+        const resp = await fetch('/api/generate-report', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ answers }) // Send answers in the body
+        });
+
+        console.log("Fetch response status:", resp.status);
+
+        if (resp.ok) {
+            const data = await resp.json();
+            if (data.reportText) {
+                 reportText = data.reportText;
+                 fetchSuccessful = true;
+                 console.log("Report fetched successfully.");
+            } else {
+                 console.error('Backend response missing reportText:', data);
+                 reportText = '⚠️ Received an invalid response from the server.';
+            }
+        } else {
+            // Try to get more error info from response body if possible
+            let errorDetails = `Server responded with status ${resp.status}.`;
+            try {
+                const errorData = await resp.json();
+                errorDetails += ` Details: ${errorData.error || errorData.message || JSON.stringify(errorData)}`;
+            } catch (jsonError) {
+                // Ignore if response body isn't valid JSON
+            }
+             console.error('Report fetch failed:', errorDetails);
+             reportText = `⚠️ Failed to generate report. ${errorDetails}`;
+        }
+    } catch (e) {
+        console.error('Network error or other issue during report fetch:', e);
+        reportText = `⚠️ Network error or unexpected issue occurred while fetching the report: ${e.message}`;
+    }
+
+    // 3. Inject the report (or error message) into the page
+    const reportContainer = document.getElementById('additional-info');
+    const reportDiv = document.createElement('div');
+    reportDiv.className = 'additional-section';
+    // Use <pre> for preserving formatting, ensure CSS handles wrapping
+    reportDiv.innerHTML = `
+      <h2 class="section-header">Your Personalized Report</h2>
+      <pre id="report-content" style="white-space: pre-wrap; font-family: inherit; line-height:1.5; text-align: left; padding: 0 10px;">${reportText}</pre>
+      <button id="download-report" class="link-box" style="margin-top:12px; display: ${fetchSuccessful ? 'inline-block' : 'none'};">
+        Download PDF
+      </button>
+    `;
+    // Prepend the report section so it appears first in additional-info
+    reportContainer.prepend(reportDiv);
+
+    // 4. Wire up jsPDF download ONLY if fetch was successful
+    if (fetchSuccessful) {
+        document.getElementById('download-report').onclick = () => {
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+                const margin = 40;
+                // Use pageSize.getWidth() for robustness
+                const usableWidth = doc.internal.pageSize.getWidth() - margin * 2;
+                doc.setFontSize(12);
+
+                // IMPORTANT: Use the final 'reportText' variable which holds the fetched content
+                const lines = doc.splitTextToSize(reportText, usableWidth);
+
+                doc.text(lines, margin, margin);
+                doc.save('student_report.pdf');
+            } catch (pdfError) {
+                 console.error("Error generating PDF:", pdfError);
+                 alert("Sorry, there was an error creating the PDF.");
+            }
+        };
+    } else {
+         console.log("PDF download button hidden due to report generation failure.");
+    }
+  })();
+  </script>
+  </body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dropout Analysis - Result</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #34495e;
+            color: #ecf0f1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .result-container {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 20px;
+        }
+
+        .dropout-risk {
+            color: #e74c3c; /* Red for drop risk */
+        }
+
+        .no-dropout-risk {
+            color: #2ecc71; /* Green for no drop risk */
+        }
+    </style>
+</head>
+<body>
+    <div class="result-container">
+        <h1>Student Dropout Prediction</h1>
+        <p id="result-text"></p>
+    </div>
+
+    <script>
+        // Function to calculate the result based on answers
+        function calculateDropout(answers) {
+            let score = 0;
+
+            if (answers.q1 === 'Not interested in business') score += 0;
+            if (answers.q1 === 'Maybe after college') score += 1;
+            if (answers.q1 === 'Somewhat interested') score += 2;
+            if (answers.q1 === 'Very likely') score += 3;
+
+            if (answers.q2 === 'More than 85') score += 0;
+            if (answers.q2 === 'Between 75-85') score += 1;
+            if (answers.q2 === 'Between 60-75') score += 2;
+            if (answers.q2 === 'Less than 60') score += 3;
+
+            if (answers.q3 === 'No formal education') score += 2;
+            if (answers.q3 === 'High School') score += 1;
+            if (answers.q3 === 'Undergraduate') score += 0;
+            if (answers.q3 === 'Postgraduate') score += 0;
+
+            if (answers.q4 === 'No formal education') score += 2;
+            if (answers.q4 === 'High School') score += 1;
+            if (answers.q4 === 'Undergraduate') score += 0;
+            if (answers.q4 === 'Postgraduate') score += 0;
+
+            if (answers.q5 === 'Not interested in business') score += 2;
+            if (answers.q5 === 'Maybe after college') score += 0;
+            if (answers.q5 === 'Somewhat interested') score += 1;
+           
+            if (answers.q6 === 'More than 85') score += 2;
+            if (answers.q6 === 'Between 75-85') score += 0;
+            if (answers.q6 === 'Between 60-75') score += 1;
+           
+
+
+            if (answers.q7 === 'Not interested in business') score += 3;
+            if (answers.q7 === 'Maybe after college') score += 0;
+            if (answers.q7 === 'Somewhat interested') score += 1;
+            if (answers.q7 === 'Very likely') score += 2;
+
+            if (answers.q8 === 'More than 85') score +=0;
+            if (answers.q8 === 'Between 75-85') score += 1;
+            if (answers.q8 === 'Between 60-75') score += 2;
+          
+
+            if (answers.q9 === 'Not interested in business') score += 2;
+            if (answers.q9 === 'Maybe after college') score += 1;
+            if (answers.q9 === 'Somewhat interested') score += 0;
+            if (answers.q9 === 'Very likely') score += 1;
+
+            if (answers.q10 === 'More than 85') score += 0;
+            if (answers.q10 === 'Between 75-85') score += 1;
+           
+
+
+            if (answers.q11 === 'Not interested in business') score += 2;
+            if (answers.q11 === 'Maybe after college') score += 1;
+            if (answers.q11 === 'Somewhat interested') score += 0;
+          
+
+            if (answers.q13 === 'Not interested in business') score += 0;
+            if (answers.q13 === 'Maybe after college') score += 1;
+            if (answers.q13 === 'Somewhat interested') score += 2;
+            if (answers.q13 === 'Very likely') score += 3;
+
+
+            if (answers.q12 === 'No, I am free to make my own choices') score += 0;
+            if (answers.q12 === 'Sometimes, I feel mild pressure') score += 1;
+            if (answers.q12 === 'Often, the pressure is noticeable') score += 2;
+            if (answers.q12 === 'Always, I feel forced into this path') score += 3;
+
+            if (answers.q14 === 'No formal education') score += 0;
+            if (answers.q14 === 'High School') score += 1;
+            if (answers.q14 === 'Undergraduate') score += 2;
+            if (answers.q14 === 'Postgraduate') score += 3;
+
+
+            if (answers.q15 === 'Not interested in business') score += 0;
+            if (answers.q15 === 'Maybe after college') score += 1;
+            if (answers.q15 === 'Somewhat interested') score += 2;
+            if (answers.q15 === 'Very likely') score += 3;
+
+            if (answers.q16 === 'More than 85') score += 0;
+            if (answers.q16 === 'Between 75-85') score += 1;
+            if (answers.q16 === 'Between 60-75') score += 2;
+            if (answers.q16 === 'Less than 60') score += 3;
+
+
+            if (answers.q17 === 'Not interested in business') score += 0;
+            if (answers.q17 === 'Maybe after college') score += 1;
+            if (answers.q17 === 'Somewhat interested') score += 2;
+            if (answers.q17 === 'Very likely') score += 3;
+
+            if (answers.q18 === 'More than 85') score += 0;
+            if (answers.q18 === 'Between 75-85') score += 1;
+            if (answers.q18 === 'Between 60-75') score += 2;
+            if (answers.q18 === 'Less than 60') score += 3;
+
+
+            if (answers.q19 === 'Not interested in business') score += 0;
+            if (answers.q19 === 'Maybe after college') score += 1;
+            if (answers.q19 === 'Somewhat interested') score += 2;
+            if (answers.q19 === 'Very likely') score += 3;
+
+            if (answers.q20 === 'More than 85') score += 0;
+            if (answers.q20 === 'Between 75-85') score += 1;
+          
+
+
+            // Threshold to determine dropout risk
+            return score >= 24 ? 'dropout' : 'no-dropout';
+        }
+
+        // Function to get answers from URL parameters
+        function getAnswersFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                q1: params.get('q1'),
+                q2: params.get('q2'),
+                q3: params.get('q3'),
+                q4: params.get('q4'),
+                q5: params.get('q5'),
+                q6: params.get('q6'),
+                q7: params.get('q7'),
+                q8: params.get('q8'),
+                q9: params.get('q9'),
+                q10: params.get('q10'),
+                q11: params.get('q11'),
+                q12: params.get('q12'),
+                q13: params.get('q13'),
+                q14: params.get('q14'),
+                q15: params.get('q15'),
+                q16: params.get('q16'),
+                q17: params.get('q17'),
+                q18: params.get('q18'),
+                q19: params.get('q19'),
+                q20: params.get('q20')
+
+
+            };
+        }
+
+        // Get answers and calculate the result
+        const answers = getAnswersFromURL();
+        const result = calculateDropout(answers);
+
+        const resultText = document.getElementById('result-text');
+        if (result === 'dropout') {
+            resultText.innerText = 'Student is at risk of dropping out.';
+            resultText.classList.add('dropout-risk'); // Red text for dropout
+        } else {
+            resultText.innerText = 'Student is not likely to drop out.';
+            resultText.classList.add('no-dropout-risk'); // Green text for no dropout
+        }
+    </script>
+</body>
+</html>

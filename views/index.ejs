@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Dropout Analysis</title>
+
+  <!-- Google Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --clr-bg-start: #22303c;
+      --clr-bg-end:   #141a21;
+      --clr-primary:  #5cb85c;
+      --clr-accent:   #f0ad4e;
+      --clr-light:    #ffffff;
+      --fw-light:     300;
+      --fw-normal:    500;
+      --fw-bold:      700;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family:'Inter',sans-serif;
+      color:var(--clr-light);
+      background: linear-gradient(135deg, var(--clr-bg-start), var(--clr-bg-end));
+      overflow-x:hidden;
+    }
+    nav {
+      position:fixed; top:0; left:0; width:100%;
+      display:flex; justify-content:space-between; align-items:center;
+      padding:1rem 2rem;
+      background:rgba(0,0,0,0.5);
+      z-index:100;
+    }
+    nav .logo {
+      font-size:1.5rem; font-weight:var(--fw-bold);
+      letter-spacing:2px;
+    }
+    nav ul {
+      display:flex; gap:1.5rem; list-style:none;
+    }
+    nav ul a {
+      color:var(--clr-light);
+      text-decoration:none;
+      font-weight:var(--fw-normal);
+      transition:color .3s;
+    }
+    nav ul a:hover {
+      color:var(--clr-accent);
+    }
+
+    /* Hero Section */
+    .hero {
+      height:100vh;
+      display:flex; flex-direction:column;
+      justify-content:center; align-items:center;
+      text-align:center;
+      position:relative;
+      padding:0 1rem;
+      background: url('https://source.unsplash.com/1600x900/?education,students') no-repeat center/cover;
+    }
+    .hero::before {
+      content:'';
+      position:absolute; inset:0;
+      background:rgba(0,0,0,0.6);
+      animation:fadeInBg 3s ease-out;
+    }
+    @keyframes fadeInBg {
+      from { background:rgba(0,0,0,0); }
+      to   { background:rgba(0,0,0,0.6); }
+    }
+    .hero-content {
+      position:relative; z-index:1;
+      max-width:700px;
+      animation:fadeInUp 1.2s ease-out both;
+    }
+    @keyframes fadeInUp {
+      from { opacity:0; transform:translateY(30px); }
+      to   { opacity:1; transform:translateY(0);    }
+    }
+    .hero h1 {
+      font-size:2.5rem;
+      font-weight:var(--fw-bold);
+      margin-bottom:1rem;
+    }
+    .hero p {
+      font-weight:var(--fw-light);
+      font-size:1.125rem;
+      line-height:1.6;
+      margin-bottom:2rem;
+    }
+    .btn {
+      display:inline-flex; align-items:center;
+      padding:.75rem 2rem;
+      background:var(--clr-primary);
+      color:var(--clr-bg-end);
+      font-weight:var(--fw-bold);
+      border-radius:50px;
+      text-decoration:none;
+      text-transform:uppercase;
+      transition:transform .3s, box-shadow .3s;
+    }
+    .btn .fa-arrow-right {
+      margin-left:.5rem;
+    }
+    .btn:hover {
+      transform:translateY(-3px);
+      box-shadow:0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    /* Footer */
+    footer {
+      text-align:center;
+      padding:1rem;
+      font-size:.9rem;
+      color:rgba(236,240,241,0.7);
+    }
+
+    @media(min-width:768px) {
+      .hero h1 { font-size:3.5rem; }
+      .hero p  { font-size:1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">Dropout<span style="color:var(--clr-accent)">Analysis</span></div>
+    <ul>
+      <li><a href="/user/dashboard">Dashboard</a></li>
+      <li><a href="/team">Team</a></li>
+      <li><a href="/user/logout">Logout</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Predict &amp; Prevent Student Dropout</h1>
+      <p>
+        Harness the power of data analytics to identify students at risk of dropping out.
+        Analyze performance, attendance, and engagement to support every learner’s success.
+      </p>
+      <a href="/user/login" class="btn">
+        Get Started <i class="fa-solid fa-arrow-right"></i>
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2025 Student Dropout Analysis • All rights reserved
+  </footer>
+
+</body>
+</html>

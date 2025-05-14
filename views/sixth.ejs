@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Student Dropout Analysis - Questions</title>
+        <style>
+          :root {
+            --clr-bg-start: #1e2a38;
+            --clr-bg-end:   #2f3e50;
+            --clr-accent:   #ffcc00;
+            --clr-light:    #ecf0f1;
+            --input-bg:     rgba(255,255,255,0.1);
+            --fw-light:     300;
+            --fw-normal:    500;
+            --fw-bold:      700;
+          }
+          *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+          body {
+            font-family:'Arial',sans-serif;
+            background: linear-gradient(135deg, var(--clr-bg-start), var(--clr-bg-end));
+            color: var(--clr-light);
+            display:flex; flex-direction:column;
+            align-items:center; justify-content:center;
+            min-height:100vh; overflow-x:hidden;
+          }
+          h1 {
+            font-size:2.5rem; font-weight:var(--fw-bold);
+            text-shadow:2px 2px 6px rgba(0,0,0,0.7);
+            margin-bottom:1.5rem;
+            letter-spacing:1px;
+            animation:kinetic 1s ease-out both;
+          }
+          @keyframes kinetic {
+            0% { letter-spacing:8px; opacity:0; }
+            100% { letter-spacing:1px; opacity:1; }
+          }
+      
+          form {
+            width:100%; max-width:700px;
+            padding:2rem;
+            background: rgba(255,255,255,0.1);
+            border-radius:16px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+          }
+      
+          .question {
+            margin-bottom:2rem;
+            opacity:0; transform: translateY(30px);
+            animation:fadeInUp 0.8s forwards;
+          }
+          .question:nth-of-type(1) { animation-delay:0.4s; }
+          .question:nth-of-type(2) { animation-delay:0.8s; }
+      
+          @keyframes fadeInUp {
+            to { opacity:1; transform: translateY(0); }
+          }
+      
+          .question h3 {
+            font-size:1.25rem; font-weight:var(--fw-normal);
+            margin-bottom:1rem;
+          }
+          .question label {
+            display:flex; align-items:center;
+            margin-bottom:0.75rem;
+            padding:0.5rem 1rem;
+            background: var(--input-bg);
+            border-radius:8px;
+            cursor:pointer;
+            transition: background 0.3s, transform 0.3s;
+            box-shadow:  6px 6px 16px rgba(0,0,0,0.3),
+                        -6px -6px 16px rgba(255,255,255,0.05);
+          }
+          .question label:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateX(5px);
+          }
+          .question input[type="radio"] {
+            margin-right:0.75rem;
+            transform: scale(1.3);
+            accent-color: var(--clr-accent);
+          }
+      
+          .next-btn {
+            display:block;
+            width:100%;
+            padding:1rem;
+            background: var(--clr-accent);
+            color: var(--clr-bg-end);
+            font-size:1.125rem;
+            font-weight:var(--fw-bold);
+            border:none;
+            border-radius:50px;
+            cursor:pointer;
+            opacity:0.6;
+            pointer-events:none;
+            transition:transform 0.3s, box-shadow 0.3s, opacity 0.3s;
+          }
+          .next-btn.enabled {
+            opacity:1; pointer-events:auto;
+            animation:pulse 1s infinite;
+          }
+          .next-btn.enabled:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(0,0,0,0.4);
+          }
+          @keyframes pulse {
+            0%,100% { transform:scale(1); }
+            50%     { transform:scale(1.05); }
+          }
+        </style>
+      </head>
+<body>
+    <h1>Student Dropout Analysis</h1>
+    <form id="questionnaire" action="/seventh" method="get">
+        <div class="question">
+            <h3>11. Are you interested in subjects that have been alloted to you?</h3>
+            <label><input type="radio" name="q11" value="Not interested in subjects that have been alloted" required> Not interested</label>
+            <label><input type="radio" name="q11" value="Somewhat interested in subjects that have been alloted"> Somewhat Interested</label>
+            <label><input type="radio" name="q11" value="interested in subjects that have been alloted"> Interested</label>
+          
+        </div>
+
+        <div class="question">
+            <h3>12. Do family or societal expectations pressure you regarding your education?</h3>
+            <label><input type="radio" name="q12" value="No, I am free to make my own choices regarding your education" required> No, I am free to make my own choices.</label>
+            <label><input type="radio" name="q12" value="Sometimes, I feel mild pressure from family or scoiety regarding education"> Sometimes, I feel mild pressure</label>
+            <label><input type="radio" name="q12" value="Often, the pressure is noticeable from family or society regarding education">  Often, the pressure is noticeable.</label>
+            <label><input type="radio" name="q12" value="Always, I feel forced from family or society regarding education path">Always, I feel forced into this path.</label>
+        </div>
+
+        <button type="submit" class="next-btn" id="next-btn">Next</button>
+    </form>
+
+    <script>
+        const form = document.getElementById('questionnaire');
+        const nextBtn = document.getElementById('next-btn');
+        const questionsOnThisPage = ['q11','q12'];
+
+        form.addEventListener('change', () => {
+
+
+            const allAnswered = questionsOnThisPage.every(qName =>{
+                return document.querySelector(`input[name="${qName}"]:checked`)
+            });
+          //  const q11Checked = document.querySelector('input[name="q11"]:checked');
+            // const q12Checked = document.querySelector('input[name="q12"]:checked');
+            
+           // if (q11Checked && q12Checked) {
+               if(allAnswered){
+                nextBtn.classList.add('enabled');
+            } else {
+                nextBtn.classList.remove('enabled');
+            }
+        });
+
+        form.addEventListener('submit', (event) => {
+        event.preventDefault(); 
+        
+        const currentParams = new URLSearchParams(window.location.search);
+        
+        let allSelectedOnPage = true;
+        questionsOnThisPage.forEach(qName =>{
+            const selectedInput = document.querySelector(`input[name="${qName}"]:checked`);
+            if(selectedInput){
+                currentParams.set(qName, selectedInput.value);
+            } else{
+                allSelectedOnPage = false;
+            }
+        });
+
+        if(!allSelectedOnPage){
+            console.error("Form submitted without all questions answered on this page.");
+            alert("Please answer all questions before proceeding.");
+            return;
+        }
+
+        const nextUrl = `${form.action}?${currentParams.toString()}`;
+        window.location.href = nextUrl;
+
+       // const urlParams = new URLSearchParams(window.location.search);
+        //const q1 = urlParams.get('q1');
+        //const q2 = urlParams.get('q2');
+        //const q3 = urlParams.get('q3');
+        //const q4 = urlParams.get('q4');
+        //const q5 = urlParams.get('q5');
+        //const q6 = urlParams.get('q6');
+        //const q7 = urlParams.get('q7');
+        //const q8 = urlParams.get('q8');
+        //const q9 = urlParams.get('q9');
+        //const q10 = urlParams.get('q10');
+
+        //const q11 = document.querySelector('input[name="q11"]:checked').value;
+        //const q12 = document.querySelector('input[name="q12"]:checked').value;
+
+        
+        window.location.href = nextUrl;
+    });
+    </script>
+</body>
+</html>
